@@ -8,31 +8,18 @@ param costCenter string = '74f644d3e665'
 param releaseAnnotationGuid string = newGuid()
 param Deployed_Environment string
 
-// Generate Azure SQL Credentials
-var sqlAdminLoginName = 'AzureAdmin'
-var sqlAdminLoginPassword = '${substring(base64(uniqueString(resourceGroup().id)), 0, 10)}.${uniqueString(resourceGroup().id)}'
-
 // Variables for Recommended abbreviations for Azure resource types
 // https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations
 var webAppPlanName = 'plan-${uniqueString(resourceGroup().id)}'
 var webSiteName = 'app-${uniqueString(resourceGroup().id)}'
-var sqlserverName = toLower('sql-${uniqueString(resourceGroup().id)}')
-var sqlDBName = toLower('sqldb-${uniqueString(resourceGroup().id)}')
-var configStoreName = 'appcs-${uniqueString(resourceGroup().id)}'
 var appInsightsName = 'appi-${uniqueString(resourceGroup().id)}'
 var appInsightsWorkspaceName = 'appw-${uniqueString(resourceGroup().id)}'
 var appInsightsAlertName = 'ResponseTime-${uniqueString(resourceGroup().id)}'
 var functionAppName = 'func-${uniqueString(resourceGroup().id)}'
 var functionAppServiceName = 'funcplan-${uniqueString(resourceGroup().id)}'
 var apiServiceName = 'apim-${uniqueString(resourceGroup().id)}'
-var loadTestsName = 'loadtests-${uniqueString(resourceGroup().id)}'
-var loadTests2ndLocation = 'northeurope'
-var loadTests2ndName = 'loadtests-${uniqueString(resourceGroup().id)}-${loadTests2ndLocation}'
 var keyvaultName = 'kv-${uniqueString(resourceGroup().id)}'
 var blobstorageName = 'stablob${uniqueString(resourceGroup().id)}'
-//var dashboardName = 'dashboard-${uniqueString(resourceGroup().id)}'
-var frontDoorName = 'fd-${uniqueString(resourceGroup().id)}'
-var logicAppName = 'logic-${uniqueString(resourceGroup().id)}'
 var cognitiveServiceName = 'cog-${uniqueString(resourceGroup().id)}'
 
 
