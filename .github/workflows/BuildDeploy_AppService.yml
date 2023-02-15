@@ -87,6 +87,7 @@ jobs:
   Build_Application:
     runs-on: ubuntu-latest
     name: 'Build Application'
+    needs: [deploy_infrastructure]
 
     permissions:
       contents: read
@@ -145,18 +146,11 @@ jobs:
           name: ImageProcessing.FuncApp
           path: ${{ github.workspace }}/functionapp
 
-      - name: Upload Infrastucture Files
-        if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: IaC
-          path: ${{ github.workspace }}/IaC/*.*
-
   ################################################################
   # Stage: Deploy to Web App
   ################################################################              
   deploy_application_to_webapp:
-    name: Deploy Web App
+    name: Deploy App to Web
     needs: [Build_Application, deploy_infrastructure]
     environment:
       name: 'Development-WebApps'
