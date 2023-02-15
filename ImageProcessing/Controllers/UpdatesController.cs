@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using System.Threading.Tasks;
-using System.Net;
-using System.Text;
-using System.Net.Http;
+﻿using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Mvc;
 using ImageProcessing.Models;
 using ImageProcessing.Web.Hubs;
+using ImageProcessing.Web.Models;
 
 namespace ImageProcessing.Web.Controllers;
 
