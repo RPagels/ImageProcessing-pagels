@@ -27,7 +27,6 @@ jobs:
     outputs:
       output_webSiteName: ${{ steps.Infra.outputs.out_webSiteName }}
       output_keyvaultName: ${{ steps.Infra.outputs.out_keyvaultName }}
-      output_webSiteName: ${{ steps.Infra.outputs.out_webSiteName }}
       output_functionAppName: ${{ steps.Infra.outputs.out_functionAppName }}
 
     name: Deploy Infrastructure
