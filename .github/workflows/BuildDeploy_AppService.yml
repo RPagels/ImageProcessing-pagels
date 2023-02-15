@@ -158,7 +158,7 @@ jobs:
   ################################################################              
   deploy_application_to_webapp:
     name: Deploy Web App
-    needs: [deploy_infrastructure]
+    needs: [Build_Application, deploy_infrastructure]
     environment:
       name: 'Development-WebApps'
       url: 'https://${{ needs.deploy_infrastructure.outputs.output_webSiteName }}.azurewebsites.net/'
