@@ -1,6 +1,6 @@
 using System;
 
-namespace ImageProcessing.Models;
+namespace ImageProcessing.Web.Models;
 
 public class GridEvent<T> where T : class
 {

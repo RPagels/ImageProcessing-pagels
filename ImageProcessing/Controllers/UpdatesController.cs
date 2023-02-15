@@ -10,8 +10,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Mvc;
-using viewer.Hubs;
-using viewer.Models;
 using ImageProcessing.Models;
 using ImageProcessing.Web.Hubs;
 
