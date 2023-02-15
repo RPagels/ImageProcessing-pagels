@@ -35,19 +35,19 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = {
 }
 
 // Blob Services for Storage Account
-resource blobServices 'Microsoft.Storage/storageAccounts/blobServices@2021-09-01' = {
-  parent: storageAccount
-  name: 'default'
-  properties: {
-    cors: {
-      corsRules: []
-    }
-    deleteRetentionPolicy: {
-      enabled: true
-      days: 7
-    }
-  }
-}
+// resource blobServices 'Microsoft.Storage/storageAccounts/blobServices@2021-09-01' = {
+//   parent: storageAccount
+//   name: 'default'
+//   properties: {
+//     cors: {
+//       corsRules: []
+//     }
+//     deleteRetentionPolicy: {
+//       enabled: true
+//       days: 7
+//     }
+//   }
+// }
 
 // App Service
 resource appService 'Microsoft.Web/serverfarms@2021-03-01' = {

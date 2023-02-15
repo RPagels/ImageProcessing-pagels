@@ -8,7 +8,7 @@ param defaultTags object
 ])
 param sku string = 'S1'
 
-resource cognitiveService 'Microsoft.CognitiveServices/accounts@2022-10-01' = {
+resource cognitiveService 'Microsoft.CognitiveServices/accounts@2022-12-01' = {
   name: cognitiveServiceName
   tags: defaultTags
   location: location
