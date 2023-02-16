@@ -56,81 +56,81 @@ resource webSiteAppSettingsStrings 'Microsoft.Web/sites/config@2022-03-01' = {
   }
 }
 
-resource webSiteWebSettingsStrings 'Microsoft.Web/sites/config@2022-03-01' = {
-  parent: appService
-  name: 'web'
-  properties: {
-    numberOfWorkers: 1
-    defaultDocuments: [
-      'Default.htm'
-      'Default.html'
-      'Default.asp'
-      'index.htm'
-      'index.html'
-      'iisstart.htm'
-      'default.aspx'
-      'index.php'
-      'hostingstart.html'
-    ]
-    netFrameworkVersion: 'v7.0'
-    phpVersion: '5.6'
-    requestTracingEnabled: false
-    remoteDebuggingEnabled: false
-    httpLoggingEnabled: false
-    acrUseManagedIdentityCreds: false
-    logsDirectorySizeLimit: 35
-    detailedErrorLoggingEnabled: false
-    publishingUsername: '$app-ImageProcessing-rpagels'
-    scmType: 'ExternalGit'
-    use32BitWorkerProcess: true
-    webSocketsEnabled: true
-    alwaysOn: false
-    managedPipelineMode: 'Integrated'
-    virtualApplications: [
-      {
-        virtualPath: '/'
-        physicalPath: 'site\\wwwroot'
-        preloadEnabled: false
-      }
-    ]
-    loadBalancing: 'LeastRequests'
-    experiments: {
-      rampUpRules: []
-    }
-    autoHealEnabled: false
-    vnetRouteAllEnabled: false
-    vnetPrivatePortsCount: 0
-    localMySqlEnabled: false
-    ipSecurityRestrictions: [
-      {
-        ipAddress: 'Any'
-        action: 'Allow'
-        priority: 2147483647
-        name: 'Allow all'
-        description: 'Allow all access'
-      }
-    ]
-    scmIpSecurityRestrictions: [
-      {
-        ipAddress: 'Any'
-        action: 'Allow'
-        priority: 2147483647
-        name: 'Allow all'
-        description: 'Allow all access'
-      }
-    ]
-    scmIpSecurityRestrictionsUseMain: false
-    http20Enabled: false
-    minTlsVersion: '1.2'
-    scmMinTlsVersion: '1.2'
-    ftpsState: 'AllAllowed'
-    preWarmedInstanceCount: 0
-    functionsRuntimeScaleMonitoringEnabled: false
-    minimumElasticInstanceCount: 0
-    azureStorageAccounts: {
-    }
-  }
-}
+// resource webSiteWebSettingsStrings 'Microsoft.Web/sites/config@2022-03-01' = {
+//   parent: appService
+//   name: 'web'
+//   properties: {
+//     numberOfWorkers: 1
+//     defaultDocuments: [
+//       'Default.htm'
+//       'Default.html'
+//       'Default.asp'
+//       'index.htm'
+//       'index.html'
+//       'iisstart.htm'
+//       'default.aspx'
+//       'index.php'
+//       'hostingstart.html'
+//     ]
+//     netFrameworkVersion: 'v7.0'
+//     phpVersion: '5.6'
+//     requestTracingEnabled: false
+//     remoteDebuggingEnabled: false
+//     httpLoggingEnabled: false
+//     acrUseManagedIdentityCreds: false
+//     logsDirectorySizeLimit: 35
+//     detailedErrorLoggingEnabled: false
+//     publishingUsername: '$app-ImageProcessing-rpagels'
+//     scmType: 'ExternalGit'
+//     use32BitWorkerProcess: true
+//     webSocketsEnabled: true
+//     alwaysOn: false
+//     managedPipelineMode: 'Integrated'
+//     virtualApplications: [
+//       {
+//         virtualPath: '/'
+//         physicalPath: 'site\\wwwroot'
+//         preloadEnabled: false
+//       }
+//     ]
+//     loadBalancing: 'LeastRequests'
+//     experiments: {
+//       rampUpRules: []
+//     }
+//     autoHealEnabled: false
+//     vnetRouteAllEnabled: false
+//     vnetPrivatePortsCount: 0
+//     localMySqlEnabled: false
+//     ipSecurityRestrictions: [
+//       {
+//         ipAddress: 'Any'
+//         action: 'Allow'
+//         priority: 2147483647
+//         name: 'Allow all'
+//         description: 'Allow all access'
+//       }
+//     ]
+//     scmIpSecurityRestrictions: [
+//       {
+//         ipAddress: 'Any'
+//         action: 'Allow'
+//         priority: 2147483647
+//         name: 'Allow all'
+//         description: 'Allow all access'
+//       }
+//     ]
+//     scmIpSecurityRestrictionsUseMain: false
+//     http20Enabled: false
+//     minTlsVersion: '1.2'
+//     scmMinTlsVersion: '1.2'
+//     ftpsState: 'AllAllowed'
+//     preWarmedInstanceCount: 0
+//     functionsRuntimeScaleMonitoringEnabled: false
+//     minimumElasticInstanceCount: 0
+//     azureStorageAccounts: {
+//     }
+//   }
+// }
 
 // Location population tags
 // https://docs.microsoft.com/en-us/azure/azure-monitor/app/monitor-web-app-availability
