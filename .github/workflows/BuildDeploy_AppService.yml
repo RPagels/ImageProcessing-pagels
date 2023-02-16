@@ -132,10 +132,10 @@ jobs:
       - name: dotnet build unit test and publish
         run: |
           dotnet restore
-          dotnet build ./ImageProcessing.Web/ImageProcessing.Web.csproj --configuration ${{ env.buildConfiguration }} --no-restore
-          dotnet publish ./ImageProcessing.Web/ImageProcessing.Web.csproj --configuration ${{ env.buildConfiguration }} -o './web'
-          dotnet build ./ImageProcessing.FuncApp/ImageProcessing.FuncApp.csproj --configuration ${{ env.buildConfiguration }} --no-restore
-          dotnet publish ./ImageProcessing.FuncApp/ImageProcessing.FuncApp.csproj --configuration ${{ env.buildConfiguration }} -o './functionapp'
+          dotnet build ImageProcessing.Web/ImageProcessing.Web.csproj --configuration ${{ env.buildConfiguration }} --no-restore
+          dotnet publish ImageProcessing.Web/ImageProcessing.Web.csproj --configuration ${{ env.buildConfiguration }} -o './web'
+          dotnet build ImageProcessing.FuncApp/ImageProcessing.FuncApp.csproj --configuration ${{ env.buildConfiguration }} --no-restore
+          dotnet publish ImageProcessing.FuncApp/ImageProcessing.FuncApp.csproj --configuration ${{ env.buildConfiguration }} -o './functionapp'
 
       ###########################################
       # Upload Artifacts
