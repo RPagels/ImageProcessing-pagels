@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using ImageProcessing.Models;
 using Microsoft.AspNetCore.Mvc;
 
+// Comment
+
 namespace viewer.Controllers
 {
     public class HomeController : Controller
