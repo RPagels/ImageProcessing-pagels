@@ -109,10 +109,21 @@ module blogstoragemod './main-blobstorage.bicep' = {
   params: {
     location: location
      storageAccountName: blobstorageName
-     webhookEndpoint: webappmod.outputs.out_webSiteName
+     defaultTags: defaultTags
+     //webhookEndpoint: webappmod.outputs.out_webSiteName
   }
-  dependsOn:  [
-    webappmod
+}
+
+module eventgridmod './main-eventgrid.bicep' = {
+  name: 'eventgrid'
+  params: {
+    location: location
+    storageAccountName: blobstorageName
+    webhookEndpoint: webappmod.outputs.out_webSiteName
+    defaultTags: defaultTags
+  }
+    dependsOn:  [
+      blogstoragemod
   ]
 }
 
@@ -138,6 +149,7 @@ module configsettingsmod './main-configsettings.bicep' = {
   name: 'configSettings'
   params: {
     keyvaultName: keyvaultName
+    
     appServiceprincipalId: webappmod.outputs.out_appServiceprincipalId
     webappName: webSiteName
     functionAppName: functionAppName
@@ -157,6 +169,7 @@ module configsettingsmod './main-configsettings.bicep' = {
      keyvaultmod
      webappmod
      functionappmod
+     blogstoragemod
    ]
  }
 
