@@ -6,7 +6,7 @@ param defaultTags object
   'S0'
   'S1'
 ])
-param sku string = 'S1'
+param sku string = 'S0'
 
 resource cognitiveService 'Microsoft.CognitiveServices/accounts@2022-12-01' = {
   name: cognitiveServiceName
@@ -20,7 +20,7 @@ resource cognitiveService 'Microsoft.CognitiveServices/accounts@2022-12-01' = {
     type:'SystemAssigned'
   }
   properties: {
-    customSubDomainName: 'mercuryhealth-${uniqueString(resourceGroup().id)}'
+    customSubDomainName: 'imageprocessing-${uniqueString(resourceGroup().id)}'
     networkAcls: {
       defaultAction: 'Allow'
       virtualNetworkRules: []
