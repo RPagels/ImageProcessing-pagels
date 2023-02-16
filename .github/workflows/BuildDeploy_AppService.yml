@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
   # Allow mannually trigger 
-  #workflow_dispatch: 
+  workflow_dispatch: 
   
 env:
   # DOCKERFILEPATH: "Application/AspNetWebApp.Web"
