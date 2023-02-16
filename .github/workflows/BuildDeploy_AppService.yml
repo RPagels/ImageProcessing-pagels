@@ -203,6 +203,10 @@ jobs:
           app-name: ${{ needs.deploy_infrastructure.outputs.output_webSiteName }}
           package: './ImageProcessing.Website'
 
+    # ToDo!  Use Azure CLI to Create an Event Grid Endpoint
+    # https://learn.microsoft.com/en-us/cli/azure/eventgrid/event-subscription?view=azure-cli-latest#az-eventgrid-event-subscription-create
+    #
+    
     - name: Download Build Artifacts-Function Application
       uses: actions/download-artifact@v2
       continue-on-error: false
