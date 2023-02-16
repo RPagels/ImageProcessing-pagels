@@ -1,6 +1,6 @@
 // The following will create an Azure Function app on
 // a consumption plan, along with a storage account
-
+param storageAccountName string
 param location string = resourceGroup().location
 // param functionRuntime string = 'dotnet'
 // param functionExtensionVersion string = '~4'
@@ -16,7 +16,7 @@ param defaultTags object
 // param ApimWebServiceURL string
 
 // remove dashes for storage account name
-var storageAccountName = 'sta${uniqueString(resourceGroup().id)}'
+//var storageAccountName = 'sta${uniqueString(resourceGroup().id)}'
 
 // Storage Account
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = {

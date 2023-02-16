@@ -80,6 +80,7 @@ module functionappmod './main-funcapp.bicep' = {
     functionAppServiceName: functionAppServiceName
     functionAppName: functionAppName
     defaultTags: defaultTags
+    storageAccountName: blobstorageName
   }
   dependsOn:  [
     appinsightsmod

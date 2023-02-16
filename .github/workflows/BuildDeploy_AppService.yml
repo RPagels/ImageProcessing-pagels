@@ -126,10 +126,10 @@ jobs:
       - name: dotnet build unit test and publish
         run: |
           dotnet restore
-          dotnet build ImageProcessing.Web/ImageProcessing.Web.csproj --configuration ${{ env.buildConfiguration }} --no-restore
-          dotnet publish ImageProcessing.Web/ImageProcessing.Web.csproj --configuration ${{ env.buildConfiguration }} -o './web'
-          dotnet build ImageProcessing.FuncApp/ImageProcessing.FuncApp.csproj --configuration ${{ env.buildConfiguration }} --no-restore
-          dotnet publish ImageProcessing.FuncApp/ImageProcessing.FuncApp.csproj --configuration ${{ env.buildConfiguration }} -o './functionapp'
+          dotnet build ./ImageProcessing.Web/ImageProcessing.Web.csproj --configuration ${{ env.buildConfiguration }} --no-restore
+          dotnet publish ./ImageProcessing.Web/ImageProcessing.Web.csproj --configuration ${{ env.buildConfiguration }} -o './web'
+          dotnet build ./ImageProcessing.FuncApp/ImageProcessing.FuncApp.csproj --configuration ${{ env.buildConfiguration }} --no-restore
+          dotnet publish ./ImageProcessing.FuncApp/ImageProcessing.FuncApp.csproj --configuration ${{ env.buildConfiguration }} -o './functionapp'
 
       ###########################################
       # Upload Artifacts
@@ -206,7 +206,8 @@ jobs:
     # ToDo!  Use Azure CLI to Create an Event Grid Endpoint
     # https://learn.microsoft.com/en-us/cli/azure/eventgrid/event-subscription?view=azure-cli-latest#az-eventgrid-event-subscription-create
     #
-    
+    # endpointUrl: 'https://${webhookEndpoint}.azurewebsites.net/api/updates'
+
     - name: Download Build Artifacts-Function Application
       uses: actions/download-artifact@v2
       continue-on-error: false
