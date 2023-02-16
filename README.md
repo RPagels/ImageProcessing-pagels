@@ -1,1 +1,1 @@
-# ImageProcessingUsingCognitiveServices
+# Image Processing Using Cognitive Services
