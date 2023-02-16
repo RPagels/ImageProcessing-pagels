@@ -2,7 +2,7 @@ param keyvaultName string
 param webappName string
 param functionAppName string
 param kvValue_AzureWebJobsStorageName string
-param kvValue_ApimSubscriptionKeyName string
+//param kvValue_ApimSubscriptionKeyName string
 param kvValue_WebsiteContentAzureFileConnectionStringName string
 param appInsightsInstrumentationKey string
 param appInsightsConnectionString string
@@ -171,7 +171,7 @@ resource funcAppSettingsStrings 'Microsoft.Web/sites/config@2022-03-01' = {
   properties: {
     AzureWebJobsStorage: '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_AzureWebJobsStorageName})'
     WebsiteContentAzureFileConnectionString: '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_WebsiteContentAzureFileConnectionStringName})'
-    ApimSubscriptionKey: '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_ApimSubscriptionKeyName})'
+    //ApimSubscriptionKey: '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_ApimSubscriptionKeyName})'
     //ApimWebServiceURL: ApimWebServiceURL
     APPINSIGHTS_INSTRUMENTATIONKEY: appInsightsInstrumentationKey
     APPLICATIONINSIGHTS_CONNECTION_STRING: appInsightsConnectionString

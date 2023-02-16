@@ -33,7 +33,7 @@ var defaultTags = {
 // KeyVault Secret Names
 param kvValue_AzureWebJobsStorageName string = 'AzureWebJobsStorage'
 param kvValue_WebsiteContentAzureFileConnectionString string = 'WebsiteContentAzureFileConnectionString'
-param kvValue_ApimSubscriptionKeyName string = 'ApimSubscriptionKey'
+//param kvValue_ApimSubscriptionKeyName string = 'ApimSubscriptionKey'
 
 
 // Create Azure KeyVault
@@ -149,7 +149,7 @@ module configsettingsmod './main-configsettings.bicep' = {
   name: 'configSettings'
   params: {
     keyvaultName: keyvaultName
-    
+
     appServiceprincipalId: webappmod.outputs.out_appServiceprincipalId
     webappName: webSiteName
     functionAppName: functionAppName
@@ -157,7 +157,7 @@ module configsettingsmod './main-configsettings.bicep' = {
     kvValue_AzureWebJobsStorageName: kvValue_AzureWebJobsStorageName
     kvValue_AzureWebJobsStorageValue: functionappmod.outputs.out_AzureWebJobsStorage
     kvValue_WebsiteContentAzureFileConnectionStringName: kvValue_WebsiteContentAzureFileConnectionString
-    kvValue_ApimSubscriptionKeyName: kvValue_ApimSubscriptionKeyName
+    //kvValue_ApimSubscriptionKeyName: kvValue_ApimSubscriptionKeyName
     //kvValue_ApimSubscriptionKeyValue: apimservicemod.outputs.out_ApimSubscriptionKeyString
     appInsightsInstrumentationKey: appinsightsmod.outputs.out_appInsightsInstrumentationKey
     appInsightsConnectionString: appinsightsmod.outputs.out_appInsightsConnectionString
@@ -177,7 +177,7 @@ module configsettingsmod './main-configsettings.bicep' = {
 output out_webSiteName string = webSiteName
 output out_appInsightsName string = appInsightsName
 output out_functionAppName string = functionAppName
-output out_apiServiceName string = apiServiceName
+//output out_apiServiceName string = apiServiceName
 //output out_apimSubscriptionKey string = apimservicemod.outputs.out_ApimSubscriptionKeyString
 output out_keyvaultName string = keyvaultName
 output out_appInsightsApplicationId string = appinsightsmod.outputs.out_appInsightsApplicationId
