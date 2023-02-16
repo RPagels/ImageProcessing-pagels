@@ -15,7 +15,7 @@ resource cognitiveService 'Microsoft.CognitiveServices/accounts@2022-12-01' = {
   sku: {
     name: sku
   }
-  kind: 'ComputerVision'
+  kind: 'CognitiveServices'
   identity: {
     type:'SystemAssigned'
   }
