@@ -50,21 +50,21 @@ resource systemTopic 'Microsoft.EventGrid/systemTopics@2022-06-15' = {
   }
 }
 
-resource eventSubscription 'Microsoft.EventGrid/systemTopics/eventSubscriptions@2022-06-15' = {
-  parent: systemTopic
-  name: eventSubName
-  properties: {
-    destination: {
-      properties: {
-        endpointUrl: 'https://${webhookEndpoint}.azurewebsites.net/api/updates'
-      }
-      endpointType: 'WebHook'
-    }
-    filter: {
-      includedEventTypes: [
-        'Microsoft.Storage.BlobCreated'
-        'Microsoft.Storage.BlobDeleted'
-      ]
-    }
-  }
-}
+// resource eventSubscription 'Microsoft.EventGrid/systemTopics/eventSubscriptions@2022-06-15' = {
+//   parent: systemTopic
+//   name: eventSubName
+//   properties: {
+//     destination: {
+//       properties: {
+//         endpointUrl: 'https://${webhookEndpoint}.azurewebsites.net/api/updates'
+//       }
+//       endpointType: 'WebHook'
+//     }
+//     filter: {
+//       includedEventTypes: [
+//         'Microsoft.Storage.BlobCreated'
+//         'Microsoft.Storage.BlobDeleted'
+//       ]
+//     }
+//   }
+// }

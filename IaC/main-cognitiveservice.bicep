@@ -32,3 +32,6 @@ resource cognitiveService 'Microsoft.CognitiveServices/accounts@2022-12-01' = {
     publicNetworkAccess: 'Enabled'
   }
 }
+
+var cognitiveServiceKeyString = cognitiveService.listKeys().key1
+output out_cognitiveServiceKeyString string = cognitiveServiceKeyString
