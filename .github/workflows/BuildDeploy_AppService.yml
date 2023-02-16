@@ -2,15 +2,9 @@ name: BuildDeploy_AppService
 
 on:
   push:
-    branches: -master
+    branches: [ "main" ]
   pull_request:
-    branches: -master
-    
-#on:
-#  push:
-#    branches: [ "main" ]
-#  pull_request:
-#    branches: [ "main" ]
+    branches: [ "main" ]
 
   # Allow mannually trigger 
   workflow_dispatch: 
@@ -132,10 +126,10 @@ jobs:
       - name: dotnet build unit test and publish
         run: |
           dotnet restore
-          dotnet build ImageProcessing.Web/ImageProcessing.Web.csproj --configuration ${{ env.buildConfiguration }} --no-restore
-          dotnet publish ImageProcessing.Web/ImageProcessing.Web.csproj --configuration ${{ env.buildConfiguration }} -o './web'
-          dotnet build ImageProcessing.FuncApp/ImageProcessing.FuncApp.csproj --configuration ${{ env.buildConfiguration }} --no-restore
-          dotnet publish ImageProcessing.FuncApp/ImageProcessing.FuncApp.csproj --configuration ${{ env.buildConfiguration }} -o './functionapp'
+          dotnet build $GITHUB_WORKSPACE/ImageProcessing.Web/ImageProcessing.Web.csproj --configuration ${{ env.buildConfiguration }} --no-restore
+          dotnet publish $GITHUB_WORKSPACE/ImageProcessing.Web/ImageProcessing.Web.csproj --configuration ${{ env.buildConfiguration }} -o './web'
+          dotnet build $GITHUB_WORKSPACE/ImageProcessing.FuncApp/ImageProcessing.FuncApp.csproj --configuration ${{ env.buildConfiguration }} --no-restore
+          dotnet publish $GITHUB_WORKSPACE/ImageProcessing.FuncApp/ImageProcessing.FuncApp.csproj --configuration ${{ env.buildConfiguration }} -o './functionapp'
 
       ###########################################
       # Upload Artifacts
