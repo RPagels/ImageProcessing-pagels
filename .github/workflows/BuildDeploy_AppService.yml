@@ -2,9 +2,15 @@ name: BuildDeploy_AppService
 
 on:
   push:
-    branches: [ "main" ]
+    branches: master
   pull_request:
-    branches: [ "main" ]
+    branches: master
+    
+#on:
+#  push:
+#    branches: [ "main" ]
+#  pull_request:
+#    branches: [ "main" ]
 
   # Allow mannually trigger 
   workflow_dispatch: 
