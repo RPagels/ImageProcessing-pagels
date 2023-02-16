@@ -3,10 +3,10 @@
 //targetScope = 'subscription'
 // Region for all resources
 param location string = resourceGroup().location
+param appName string = 'Image Processing'
 param createdBy string = 'Randy Pagels' // resourceGroup().managedBy
 param costCenter string = '74f644d3e665'
 param releaseAnnotationGuid string = newGuid()
-param Deployed_Environment string
 
 // Variables for Recommended abbreviations for Azure resource types
 // https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations
@@ -25,8 +25,7 @@ var cognitiveServiceName = 'cog-${uniqueString(resourceGroup().id)}'
 
 // Tags
 var defaultTags = {
-  Env: Deployed_Environment
-  App: 'Mercury Health'
+  AppName: appName
   CostCenter: costCenter
   CreatedBy: createdBy
 }
@@ -55,7 +54,6 @@ module webappmod './main-webapp.bicep' = {
     webAppPlanName: webAppPlanName
     webSiteName: webSiteName
     resourceGroupName: resourceGroup().name
-    Deployed_Environment: Deployed_Environment
     appInsightsName: appInsightsName
     location: location
     appInsightsInstrumentationKey: appinsightsmod.outputs.out_appInsightsInstrumentationKey
@@ -153,7 +151,6 @@ module configsettingsmod './main-configsettings.bicep' = {
     //kvValue_ApimSubscriptionKeyValue: apimservicemod.outputs.out_ApimSubscriptionKeyString
     appInsightsInstrumentationKey: appinsightsmod.outputs.out_appInsightsInstrumentationKey
     appInsightsConnectionString: appinsightsmod.outputs.out_appInsightsConnectionString
-    Deployed_Environment: Deployed_Environment
     //ApimWebServiceURL: apimservicemod.outputs.out_ApimWebServiceURL
     AzObjectIdPagels: AzObjectIdPagels
     ADOServiceprincipalObjectId: ADOServiceprincipalObjectId

@@ -6,7 +6,6 @@ param kvValue_ApimSubscriptionKeyName string
 param kvValue_WebsiteContentAzureFileConnectionStringName string
 param appInsightsInstrumentationKey string
 param appInsightsConnectionString string
-param Deployed_Environment string
 //param ApimWebServiceURL string
 
 // @secure()
@@ -147,7 +146,6 @@ resource webSiteAppSettingsStrings 'Microsoft.Web/sites/config@2022-03-01' = {
   name: 'appsettings'
   parent: existing_appService
   properties: {
-    DeployedEnvironment: Deployed_Environment
     WEBSITE_RUN_FROM_PACKAGE: '1'
     WEBSITE_SENTINEL: '1'
     APPINSIGHTS_INSTRUMENTATIONKEY: appInsightsInstrumentationKey

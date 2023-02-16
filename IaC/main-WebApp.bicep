@@ -1,7 +1,6 @@
 param skuName string = 'S1'
 //param skuCapacity int = 1
 param location string = resourceGroup().location
-param Deployed_Environment string
 param webAppPlanName string
 param webSiteName string
 param resourceGroupName string
@@ -15,7 +14,7 @@ param defaultTags object
 // App Configuration Data Reader	Allows read access to App Configuration data.	516239f1-63e1-4d78-a4de-a74fb236a071
 //var AppConfigDataReaderRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '516239f1-63e1-4d78-a4de-a74fb236a071')
 
-resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: webAppPlanName
   location: location
   tags: defaultTags
@@ -25,7 +24,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   }
 }
 
-resource appService 'Microsoft.Web/sites@2021-03-01' = {
+resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: webSiteName
   location: location
   kind: 'app'
@@ -43,11 +42,10 @@ resource appService 'Microsoft.Web/sites@2021-03-01' = {
   }
 }
 
-resource webSiteAppSettingsStrings 'Microsoft.Web/sites/config@2021-03-01' = {
+resource webSiteAppSettingsStrings 'Microsoft.Web/sites/config@2022-03-01' = {
   name: 'appsettings'
   parent: appService
   properties: {
-    DeployedEnvironment: Deployed_Environment
     WEBSITE_RUN_FROM_PACKAGE: '1'
     APPINSIGHTS_INSTRUMENTATIONKEY: appInsightsInstrumentationKey
     APPINSIGHTS_PROFILERFEATURE_VERSION: '1.0.0'
@@ -55,6 +53,82 @@ resource webSiteAppSettingsStrings 'Microsoft.Web/sites/config@2021-03-01' = {
     APPLICATIONINSIGHTS_CONNECTION_STRING: appInsightsConnectionString
     WebAppUrl: 'https://${appService.name}.azurewebsites.net/'
     ASPNETCORE_ENVIRONMENT: 'Development'
+  }
+}
+
+resource webSiteWebSettingsStrings 'Microsoft.Web/sites/config@2022-03-01' = {
+  parent: appService
+  name: 'web'
+  properties: {
+    numberOfWorkers: 1
+    defaultDocuments: [
+      'Default.htm'
+      'Default.html'
+      'Default.asp'
+      'index.htm'
+      'index.html'
+      'iisstart.htm'
+      'default.aspx'
+      'index.php'
+      'hostingstart.html'
+    ]
+    netFrameworkVersion: 'v7.0'
+    phpVersion: '5.6'
+    requestTracingEnabled: false
+    remoteDebuggingEnabled: false
+    httpLoggingEnabled: false
+    acrUseManagedIdentityCreds: false
+    logsDirectorySizeLimit: 35
+    detailedErrorLoggingEnabled: false
+    publishingUsername: '$app-ImageProcessing-rpagels'
+    scmType: 'ExternalGit'
+    use32BitWorkerProcess: true
+    webSocketsEnabled: true
+    alwaysOn: false
+    managedPipelineMode: 'Integrated'
+    virtualApplications: [
+      {
+        virtualPath: '/'
+        physicalPath: 'site\\wwwroot'
+        preloadEnabled: false
+      }
+    ]
+    loadBalancing: 'LeastRequests'
+    experiments: {
+      rampUpRules: []
+    }
+    autoHealEnabled: false
+    vnetRouteAllEnabled: false
+    vnetPrivatePortsCount: 0
+    localMySqlEnabled: false
+    ipSecurityRestrictions: [
+      {
+        ipAddress: 'Any'
+        action: 'Allow'
+        priority: 2147483647
+        name: 'Allow all'
+        description: 'Allow all access'
+      }
+    ]
+    scmIpSecurityRestrictions: [
+      {
+        ipAddress: 'Any'
+        action: 'Allow'
+        priority: 2147483647
+        name: 'Allow all'
+        description: 'Allow all access'
+      }
+    ]
+    scmIpSecurityRestrictionsUseMain: false
+    http20Enabled: false
+    minTlsVersion: '1.2'
+    scmMinTlsVersion: '1.2'
+    ftpsState: 'AllAllowed'
+    preWarmedInstanceCount: 0
+    functionsRuntimeScaleMonitoringEnabled: false
+    minimumElasticInstanceCount: 0
+    azureStorageAccounts: {
+    }
   }
 }
 
