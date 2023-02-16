@@ -2,11 +2,12 @@ name: BuildDeploy_AppService
 
 on:
   push:
-    branches:
-      - master
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
   # Allow mannually trigger 
-  workflow_dispatch: 
+  #workflow_dispatch: 
   
 env:
   # DOCKERFILEPATH: "Application/AspNetWebApp.Web"
