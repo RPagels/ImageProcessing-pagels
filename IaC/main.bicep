@@ -31,8 +31,6 @@ var defaultTags = {
 }
 
 // KeyVault Secret Names
-param kvValue_configStoreConnectionName string = 'ConnectionStringsAppConfig'
-param kvValue_ConnectionStringName string = 'ConnectionStringsMercuryHealthWebContext'
 param kvValue_AzureWebJobsStorageName string = 'AzureWebJobsStorage'
 param kvValue_WebsiteContentAzureFileConnectionString string = 'WebsiteContentAzureFileConnectionString'
 param kvValue_ApimSubscriptionKeyName string = 'ApimSubscriptionKey'
@@ -118,14 +116,14 @@ module blogstoragemod './main-blobstorage.bicep' = {
   ]
 }
 
-// module cognitiveservicemod './main-cognitiveservice.bicep' = {
-//   name: cognitiveServiceName
-//   params: {
-//     defaultTags: defaultTags
-//     cognitiveServiceName: cognitiveServiceName
-//     location: location
-//   }
-// }
+module cognitiveservicemod './main-cognitiveservice.bicep' = {
+  name: cognitiveServiceName
+  params: {
+    defaultTags: defaultTags
+    cognitiveServiceName: cognitiveServiceName
+    location: location
+  }
+}
 
 //param AzObjectIdPagels string = 'b6be0700-1fda-4f88-bf20-1aa508a91f73'
 param AzObjectIdPagels string = '197b8610-80f8-4317-b9c4-06e5b3246e87'
