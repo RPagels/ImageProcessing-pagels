@@ -20,7 +20,7 @@ resource cognitiveService 'Microsoft.CognitiveServices/accounts@2022-12-01' = {
     type:'SystemAssigned'
   }
   properties: {
-    customSubDomainName: 'imageprocessing-${uniqueString(resourceGroup().id)}'
+    //customSubDomainName: 'imageprocessing-${uniqueString(resourceGroup().id)}'
     networkAcls: {
       defaultAction: 'Allow'
       virtualNetworkRules: []
