@@ -120,7 +120,7 @@ module blogstoragemod './main-blobstorage.bicep' = {
   ]
 }
 
-module cognitiveservicemod 'main-cognitiveservice.bicep' = {
+module cognitiveservicemod './main-cognitiveservice.bicep' = {
   name: cognitiveServiceName
   params: {
     defaultTags: defaultTags

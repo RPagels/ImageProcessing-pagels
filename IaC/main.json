@@ -1,0 +1,1393 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.14.46.61228",
+      "templateHash": "4512559232109366555"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "createdBy": {
+      "type": "string",
+      "defaultValue": "Randy Pagels"
+    },
+    "costCenter": {
+      "type": "string",
+      "defaultValue": "74f644d3e665"
+    },
+    "releaseAnnotationGuid": {
+      "type": "string",
+      "defaultValue": "[newGuid()]"
+    },
+    "Deployed_Environment": {
+      "type": "string"
+    },
+    "kvValue_configStoreConnectionName": {
+      "type": "string",
+      "defaultValue": "ConnectionStringsAppConfig"
+    },
+    "kvValue_ConnectionStringName": {
+      "type": "string",
+      "defaultValue": "ConnectionStringsMercuryHealthWebContext"
+    },
+    "kvValue_AzureWebJobsStorageName": {
+      "type": "string",
+      "defaultValue": "AzureWebJobsStorage"
+    },
+    "kvValue_WebsiteContentAzureFileConnectionString": {
+      "type": "string",
+      "defaultValue": "WebsiteContentAzureFileConnectionString"
+    },
+    "kvValue_ApimSubscriptionKeyName": {
+      "type": "string",
+      "defaultValue": "ApimSubscriptionKey"
+    },
+    "AzObjectIdPagels": {
+      "type": "string",
+      "defaultValue": "197b8610-80f8-4317-b9c4-06e5b3246e87"
+    },
+    "ADOServiceprincipalObjectId": {
+      "type": "string",
+      "defaultValue": "61ad559f-a07a-4d8f-981b-c88e69216dd1"
+    }
+  },
+  "variables": {
+    "webAppPlanName": "[format('plan-{0}', uniqueString(resourceGroup().id))]",
+    "webSiteName": "[format('app-{0}', uniqueString(resourceGroup().id))]",
+    "appInsightsName": "[format('appi-{0}', uniqueString(resourceGroup().id))]",
+    "appInsightsWorkspaceName": "[format('appw-{0}', uniqueString(resourceGroup().id))]",
+    "appInsightsAlertName": "[format('ResponseTime-{0}', uniqueString(resourceGroup().id))]",
+    "functionAppName": "[format('func-{0}', uniqueString(resourceGroup().id))]",
+    "functionAppServiceName": "[format('funcplan-{0}', uniqueString(resourceGroup().id))]",
+    "apiServiceName": "[format('apim-{0}', uniqueString(resourceGroup().id))]",
+    "keyvaultName": "[format('kv-{0}', uniqueString(resourceGroup().id))]",
+    "blobstorageName": "[format('stablob{0}', uniqueString(resourceGroup().id))]",
+    "cognitiveServiceName": "[format('cog-{0}', uniqueString(resourceGroup().id))]",
+    "defaultTags": {
+      "Env": "[parameters('Deployed_Environment')]",
+      "App": "Mercury Health",
+      "CostCenter": "[parameters('costCenter')]",
+      "CreatedBy": "[parameters('createdBy')]"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[variables('keyvaultName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "vaultName": {
+            "value": "[variables('keyvaultName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.14.46.61228",
+              "templateHash": "18351153437557532336"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]"
+            },
+            "vaultName": {
+              "type": "string"
+            },
+            "tenant": {
+              "type": "string",
+              "defaultValue": "[subscription().tenantId]"
+            },
+            "accessPolicies": {
+              "type": "array",
+              "defaultValue": []
+            },
+            "networkAcls": {
+              "type": "object",
+              "defaultValue": {
+                "ipRules": [],
+                "virtualNetworkRules": []
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.KeyVault/vaults",
+              "apiVersion": "2021-11-01-preview",
+              "name": "[parameters('vaultName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "tenantId": "[parameters('tenant')]",
+                "sku": {
+                  "family": "A",
+                  "name": "standard"
+                },
+                "enableSoftDelete": false,
+                "accessPolicies": "[parameters('accessPolicies')]",
+                "enabledForDeployment": true,
+                "enabledForDiskEncryption": true,
+                "enabledForTemplateDeployment": true,
+                "softDeleteRetentionInDays": 90,
+                "enableRbacAuthorization": false,
+                "networkAcls": "[parameters('networkAcls')]"
+              }
+            }
+          ],
+          "outputs": {
+            "proxyKey": {
+              "type": "object",
+              "value": "[reference(resourceId('Microsoft.KeyVault/vaults', parameters('vaultName')), '2021-11-01-preview', 'full')]"
+            },
+            "keyvaultName": {
+              "type": "string",
+              "value": "[parameters('vaultName')]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "webappdeploy",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "webAppPlanName": {
+            "value": "[variables('webAppPlanName')]"
+          },
+          "webSiteName": {
+            "value": "[variables('webSiteName')]"
+          },
+          "resourceGroupName": {
+            "value": "[resourceGroup().name]"
+          },
+          "Deployed_Environment": {
+            "value": "[parameters('Deployed_Environment')]"
+          },
+          "appInsightsName": {
+            "value": "[variables('appInsightsName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "appInsightsInstrumentationKey": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'appinsightsdeploy'), '2020-10-01').outputs.out_appInsightsInstrumentationKey.value]"
+          },
+          "appInsightsConnectionString": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'appinsightsdeploy'), '2020-10-01').outputs.out_appInsightsConnectionString.value]"
+          },
+          "defaultTags": {
+            "value": "[variables('defaultTags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.14.46.61228",
+              "templateHash": "14388818255350316748"
+            }
+          },
+          "parameters": {
+            "skuName": {
+              "type": "string",
+              "defaultValue": "S1"
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]"
+            },
+            "Deployed_Environment": {
+              "type": "string"
+            },
+            "webAppPlanName": {
+              "type": "string"
+            },
+            "webSiteName": {
+              "type": "string"
+            },
+            "resourceGroupName": {
+              "type": "string"
+            },
+            "appInsightsName": {
+              "type": "string"
+            },
+            "appInsightsInstrumentationKey": {
+              "type": "string"
+            },
+            "appInsightsConnectionString": {
+              "type": "string"
+            },
+            "defaultTags": {
+              "type": "object"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Web/serverfarms",
+              "apiVersion": "2021-03-01",
+              "name": "[parameters('webAppPlanName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('defaultTags')]",
+              "properties": {},
+              "sku": {
+                "name": "[parameters('skuName')]"
+              }
+            },
+            {
+              "type": "Microsoft.Web/sites",
+              "apiVersion": "2021-03-01",
+              "name": "[parameters('webSiteName')]",
+              "location": "[parameters('location')]",
+              "kind": "app",
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "tags": "[parameters('defaultTags')]",
+              "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('webAppPlanName'))]",
+                "httpsOnly": true,
+                "siteConfig": {
+                  "minTlsVersion": "1.2",
+                  "healthCheckPath": "/healthy"
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('webAppPlanName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Web/sites/config",
+              "apiVersion": "2021-03-01",
+              "name": "[format('{0}/{1}', parameters('webSiteName'), 'appsettings')]",
+              "properties": {
+                "DeployedEnvironment": "[parameters('Deployed_Environment')]",
+                "WEBSITE_RUN_FROM_PACKAGE": "1",
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('appInsightsInstrumentationKey')]",
+                "APPINSIGHTS_PROFILERFEATURE_VERSION": "1.0.0",
+                "APPINSIGHTS_SNAPSHOTFEATURE_VERSION": "1.0.0",
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('appInsightsConnectionString')]",
+                "WebAppUrl": "[format('https://{0}.azurewebsites.net/', parameters('webSiteName'))]",
+                "ASPNETCORE_ENVIRONMENT": "Development"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('webSiteName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Insights/webtests",
+              "apiVersion": "2022-06-15",
+              "name": "Page Home",
+              "location": "[parameters('location')]",
+              "tags": {
+                "[format('hidden-link:{0}/resourceGroups/{1}/providers/microsoft.insights/components/{2}', subscription().id, parameters('resourceGroupName'), parameters('appInsightsName'))]": "Resource"
+              },
+              "kind": "ping",
+              "properties": {
+                "SyntheticMonitorId": "[parameters('appInsightsName')]",
+                "Name": "Page Home",
+                "Description": null,
+                "Enabled": true,
+                "Frequency": 300,
+                "Timeout": 120,
+                "Kind": "standard",
+                "RetryEnabled": true,
+                "Locations": [
+                  {
+                    "Id": "us-va-ash-azr"
+                  },
+                  {
+                    "Id": "us-fl-mia-edge"
+                  },
+                  {
+                    "Id": "us-ca-sjc-azr"
+                  },
+                  {
+                    "Id": "emea-au-syd-edge"
+                  },
+                  {
+                    "Id": "apac-jp-kaw-edge"
+                  }
+                ],
+                "Configuration": null,
+                "Request": {
+                  "RequestUrl": "[format('https://{0}.azurewebsites.net/', parameters('webSiteName'))]",
+                  "Headers": null,
+                  "HttpVerb": "GET",
+                  "RequestBody": null,
+                  "ParseDependentRequests": false,
+                  "FollowRedirects": null
+                },
+                "ValidationRules": {
+                  "ExpectedHttpStatusCode": 200,
+                  "IgnoreHttpsStatusCode": false,
+                  "ContentValidation": null,
+                  "SSLCheck": true,
+                  "SSLCertRemainingLifetimeCheck": 7
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('webSiteName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Insights/webtests",
+              "apiVersion": "2022-06-15",
+              "name": "Page Nutritions",
+              "location": "[parameters('location')]",
+              "tags": {
+                "[format('hidden-link:{0}/resourceGroups/{1}/providers/microsoft.insights/components/{2}', subscription().id, parameters('resourceGroupName'), parameters('appInsightsName'))]": "Resource"
+              },
+              "kind": "ping",
+              "properties": {
+                "SyntheticMonitorId": "[parameters('appInsightsName')]",
+                "Name": "Page Nutritions",
+                "Description": null,
+                "Enabled": true,
+                "Frequency": 300,
+                "Timeout": 120,
+                "Kind": "standard",
+                "RetryEnabled": true,
+                "Locations": [
+                  {
+                    "Id": "us-va-ash-azr"
+                  },
+                  {
+                    "Id": "us-fl-mia-edge"
+                  },
+                  {
+                    "Id": "us-ca-sjc-azr"
+                  },
+                  {
+                    "Id": "emea-au-syd-edge"
+                  },
+                  {
+                    "Id": "apac-jp-kaw-edge"
+                  }
+                ],
+                "Configuration": null,
+                "Request": {
+                  "RequestUrl": "[format('https://{0}.azurewebsites.net/Nutritions/', parameters('webSiteName'))]",
+                  "Headers": null,
+                  "HttpVerb": "GET",
+                  "RequestBody": null,
+                  "ParseDependentRequests": false,
+                  "FollowRedirects": null
+                },
+                "ValidationRules": {
+                  "ExpectedHttpStatusCode": 200,
+                  "IgnoreHttpsStatusCode": false,
+                  "ContentValidation": null,
+                  "SSLCheck": true,
+                  "SSLCertRemainingLifetimeCheck": 7
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('webSiteName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Insights/webtests",
+              "apiVersion": "2022-06-15",
+              "name": "Page Exercises",
+              "location": "[parameters('location')]",
+              "tags": {
+                "[format('hidden-link:{0}/resourceGroups/{1}/providers/microsoft.insights/components/{2}', subscription().id, parameters('resourceGroupName'), parameters('appInsightsName'))]": "Resource"
+              },
+              "kind": "ping",
+              "properties": {
+                "SyntheticMonitorId": "[parameters('appInsightsName')]",
+                "Name": "Page Exercises",
+                "Description": null,
+                "Enabled": true,
+                "Frequency": 300,
+                "Timeout": 120,
+                "Kind": "standard",
+                "RetryEnabled": true,
+                "Locations": [
+                  {
+                    "Id": "us-va-ash-azr"
+                  },
+                  {
+                    "Id": "us-fl-mia-edge"
+                  },
+                  {
+                    "Id": "us-ca-sjc-azr"
+                  },
+                  {
+                    "Id": "emea-au-syd-edge"
+                  },
+                  {
+                    "Id": "apac-jp-kaw-edge"
+                  }
+                ],
+                "Configuration": null,
+                "Request": {
+                  "RequestUrl": "[format('https://{0}.azurewebsites.net/Exercises/', parameters('webSiteName'))]",
+                  "Headers": null,
+                  "HttpVerb": "GET",
+                  "RequestBody": null,
+                  "ParseDependentRequests": false,
+                  "FollowRedirects": null
+                },
+                "ValidationRules": {
+                  "ExpectedHttpStatusCode": 200,
+                  "IgnoreHttpsStatusCode": false,
+                  "ContentValidation": null,
+                  "SSLCheck": true,
+                  "SSLCertRemainingLifetimeCheck": 7
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('webSiteName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "out_appService": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Web/sites', parameters('webSiteName'))]"
+            },
+            "out_webSiteName": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Web/sites', parameters('webSiteName')), '2021-03-01').defaultHostName]"
+            },
+            "out_appServiceprincipalId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Web/sites', parameters('webSiteName')), '2021-03-01', 'full').identity.principalId]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'appinsightsdeploy')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "appinsightsdeploy",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "appInsightsName": {
+            "value": "[variables('appInsightsName')]"
+          },
+          "defaultTags": {
+            "value": "[variables('defaultTags')]"
+          },
+          "appInsightsAlertName": {
+            "value": "[variables('appInsightsAlertName')]"
+          },
+          "appInsightsWorkspaceName": {
+            "value": "[variables('appInsightsWorkspaceName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.14.46.61228",
+              "templateHash": "3684918642781032082"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]"
+            },
+            "appInsightsName": {
+              "type": "string"
+            },
+            "appInsightsWorkspaceName": {
+              "type": "string"
+            },
+            "appInsightsAlertName": {
+              "type": "string"
+            },
+            "defaultTags": {
+              "type": "object"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.OperationalInsights/workspaces",
+              "apiVersion": "2021-06-01",
+              "name": "[parameters('appInsightsWorkspaceName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "sku": {
+                  "name": "PerGB2018"
+                },
+                "retentionInDays": 30,
+                "features": {
+                  "searchVersion": 1,
+                  "legacy": 0,
+                  "enableLogAccessUsingOnlyResourcePermissions": true
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Insights/components",
+              "apiVersion": "2020-02-02",
+              "name": "[parameters('appInsightsName')]",
+              "location": "[parameters('location')]",
+              "tags": "[parameters('defaultTags')]",
+              "kind": "web",
+              "properties": {
+                "Application_Type": "web",
+                "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('appInsightsWorkspaceName'))]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('appInsightsWorkspaceName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Insights/metricAlerts",
+              "apiVersion": "2018-03-01",
+              "name": "[parameters('appInsightsAlertName')]",
+              "location": "global",
+              "properties": {
+                "description": "Response time alert",
+                "severity": 0,
+                "enabled": true,
+                "scopes": [
+                  "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]"
+                ],
+                "evaluationFrequency": "PT1M",
+                "windowSize": "PT5M",
+                "criteria": {
+                  "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+                  "allOf": [
+                    {
+                      "name": "1st criterion",
+                      "metricName": "requests/duration",
+                      "operator": "GreaterThan",
+                      "threshold": 5000,
+                      "timeAggregation": "Average",
+                      "criterionType": "StaticThresholdCriterion"
+                    }
+                  ]
+                },
+                "actions": [
+                  {
+                    "actionGroupId": "[resourceId('Microsoft.Insights/actionGroups', format('ag--{0}', uniqueString(resourceGroup().id)))]"
+                  }
+                ]
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]",
+                "[resourceId('Microsoft.Insights/actionGroups', format('ag--{0}', uniqueString(resourceGroup().id)))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Insights/actionGroups",
+              "apiVersion": "2021-09-01",
+              "name": "[format('ag--{0}', uniqueString(resourceGroup().id))]",
+              "location": "global",
+              "properties": {
+                "groupShortName": "Randy Pagels",
+                "enabled": true,
+                "emailReceivers": [
+                  {
+                    "name": "Randy Pagels",
+                    "emailAddress": "rpagels@microsoft.com",
+                    "useCommonAlertSchema": true
+                  }
+                ]
+              }
+            }
+          ],
+          "outputs": {
+            "out_applicationInsightsID": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]"
+            },
+            "out_appInsightsInstrumentationKey": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName')), '2020-02-02').InstrumentationKey]"
+            },
+            "out_appInsightsConnectionString": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName')), '2020-02-02').ConnectionString]"
+            },
+            "out_appInsightsApplicationId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName')), '2020-02-02').ApplicationId]"
+            },
+            "out_appInsightsAPIApplicationId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName')), '2020-02-02').AppId]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "functionappdeploy",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "functionAppServiceName": {
+            "value": "[variables('functionAppServiceName')]"
+          },
+          "functionAppName": {
+            "value": "[variables('functionAppName')]"
+          },
+          "defaultTags": {
+            "value": "[variables('defaultTags')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.14.46.61228",
+              "templateHash": "15896983448711406079"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]"
+            },
+            "functionAppName": {
+              "type": "string"
+            },
+            "functionAppServiceName": {
+              "type": "string"
+            },
+            "defaultTags": {
+              "type": "object"
+            }
+          },
+          "variables": {
+            "storageAccountName": "[format('sta{0}', uniqueString(resourceGroup().id))]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2021-09-01",
+              "name": "[variables('storageAccountName')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Standard_LRS"
+              },
+              "tags": "[parameters('defaultTags')]",
+              "kind": "StorageV2",
+              "properties": {
+                "supportsHttpsTrafficOnly": true,
+                "allowBlobPublicAccess": false,
+                "accessTier": "Hot"
+              }
+            },
+            {
+              "type": "Microsoft.Web/serverfarms",
+              "apiVersion": "2021-03-01",
+              "name": "[parameters('functionAppServiceName')]",
+              "location": "[parameters('location')]",
+              "kind": "functionapp",
+              "tags": "[parameters('defaultTags')]",
+              "sku": {
+                "name": "Y1",
+                "tier": "Dynamic",
+                "size": "Y1",
+                "family": "Y",
+                "capacity": 0
+              },
+              "properties": {
+                "perSiteScaling": false,
+                "maximumElasticWorkerCount": 1,
+                "isSpot": false,
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0
+              }
+            },
+            {
+              "type": "Microsoft.Web/sites",
+              "apiVersion": "2021-03-01",
+              "name": "[parameters('functionAppName')]",
+              "location": "[parameters('location')]",
+              "kind": "functionapp",
+              "tags": "[parameters('defaultTags')]",
+              "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                  {
+                    "name": "[format('{0}.azurewebsites.net', parameters('functionAppName'))]",
+                    "sslState": "Disabled",
+                    "hostType": "Standard"
+                  },
+                  {
+                    "name": "[format('{0}.scm.azurewebsites.net', parameters('functionAppName'))]",
+                    "sslState": "Disabled",
+                    "hostType": "Standard"
+                  }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('functionAppServiceName'))]",
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "siteConfig": {},
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": false,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": true,
+                "redundancyMode": "None"
+              },
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('functionAppServiceName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Web/sites/config",
+              "apiVersion": "2021-03-01",
+              "name": "[format('{0}/{1}', parameters('functionAppName'), 'web')]",
+              "properties": {
+                "numberOfWorkers": -1,
+                "defaultDocuments": [
+                  "Default.htm",
+                  "Default.html",
+                  "Default.asp",
+                  "index.htm",
+                  "index.html",
+                  "iisstart.htm",
+                  "default.aspx",
+                  "index.php",
+                  "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "phpVersion": "5.6",
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "httpLoggingEnabled": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "[format('${0}', parameters('functionAppName'))]",
+                "scmType": "None",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": false,
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                  {
+                    "virtualPath": "/",
+                    "physicalPath": "site\\wwwroot",
+                    "preloadEnabled": true
+                  }
+                ],
+                "loadBalancing": "LeastRequests",
+                "experiments": {
+                  "rampUpRules": []
+                },
+                "autoHealEnabled": false,
+                "cors": {
+                  "allowedOrigins": [
+                    "https://functions.azure.com",
+                    "https://functions-staging.azure.com",
+                    "https://functions-next.azure.com"
+                  ],
+                  "supportCredentials": false
+                },
+                "localMySqlEnabled": false,
+                "ipSecurityRestrictions": [
+                  {
+                    "ipAddress": "Any",
+                    "action": "Allow",
+                    "priority": 1,
+                    "name": "Allow all",
+                    "description": "Allow all access"
+                  }
+                ],
+                "scmIpSecurityRestrictions": [
+                  {
+                    "ipAddress": "Any",
+                    "action": "Allow",
+                    "priority": 1,
+                    "name": "Allow all",
+                    "description": "Allow all access"
+                  }
+                ],
+                "scmIpSecurityRestrictionsUseMain": false,
+                "http20Enabled": true,
+                "minTlsVersion": "1.2",
+                "ftpsState": "AllAllowed",
+                "preWarmedInstanceCount": 0
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Web/sites/hostNameBindings",
+              "apiVersion": "2021-03-01",
+              "name": "[format('{0}/{1}', parameters('functionAppName'), format('{0}.azurewebsites.net', parameters('functionAppName')))]",
+              "properties": {
+                "siteName": "[parameters('functionAppName')]",
+                "hostNameType": "Verified"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "out_funcAppServiceprincipalId": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Web/sites', parameters('functionAppName')), '2021-03-01', 'full').identity.principalId]"
+            },
+            "out_AzureWebJobsStorage": {
+              "type": "string",
+              "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', variables('storageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2021-09-01').keys[0].value)]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'appinsightsdeploy')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[variables('blobstorageName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "storageAccountName": {
+            "value": "[variables('blobstorageName')]"
+          },
+          "webhookEndpoint": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'webappdeploy'), '2020-10-01').outputs.out_webSiteName.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.14.46.61228",
+              "templateHash": "1990004848557906755"
+            }
+          },
+          "parameters": {
+            "storageAccountName": {
+              "type": "string"
+            },
+            "containerName1": {
+              "type": "string",
+              "defaultValue": "images"
+            },
+            "containerName2": {
+              "type": "string",
+              "defaultValue": "imagesthumbnails"
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]"
+            },
+            "eventSubName": {
+              "type": "string",
+              "defaultValue": "subToStorage"
+            },
+            "webhookEndpoint": {
+              "type": "string"
+            },
+            "systemTopicName": {
+              "type": "string",
+              "defaultValue": "mystoragesystemtopic"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2022-09-01",
+              "name": "[parameters('storageAccountName')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Standard_LRS"
+              },
+              "kind": "StorageV2",
+              "properties": {
+                "accessTier": "Hot",
+                "allowBlobPublicAccess": false
+              }
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+              "apiVersion": "2022-09-01",
+              "name": "[format('{0}/default/{1}', parameters('storageAccountName'), parameters('containerName1'))]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+              "apiVersion": "2022-09-01",
+              "name": "[format('{0}/default/{1}', parameters('storageAccountName'), parameters('containerName2'))]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.EventGrid/systemTopics",
+              "apiVersion": "2022-06-15",
+              "name": "[parameters('systemTopicName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "source": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+                "topicType": "Microsoft.Storage.StorageAccounts"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.EventGrid/systemTopics/eventSubscriptions",
+              "apiVersion": "2022-06-15",
+              "name": "[format('{0}/{1}', parameters('systemTopicName'), parameters('eventSubName'))]",
+              "properties": {
+                "destination": {
+                  "properties": {
+                    "endpointUrl": "[format('https://{0}.azurewebsites.net/api/updates', parameters('webhookEndpoint'))]"
+                  },
+                  "endpointType": "WebHook"
+                },
+                "filter": {
+                  "includedEventTypes": [
+                    "Microsoft.Storage.BlobCreated",
+                    "Microsoft.Storage.BlobDeleted"
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.EventGrid/systemTopics', parameters('systemTopicName'))]"
+              ]
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'webappdeploy')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "[variables('cognitiveServiceName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "defaultTags": {
+            "value": "[variables('defaultTags')]"
+          },
+          "cognitiveServiceName": {
+            "value": "[variables('cognitiveServiceName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.14.46.61228",
+              "templateHash": "17865649225620624705"
+            }
+          },
+          "parameters": {
+            "cognitiveServiceName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "defaultTags": {
+              "type": "object"
+            },
+            "sku": {
+              "type": "string",
+              "defaultValue": "S1",
+              "allowedValues": [
+                "S0",
+                "S1"
+              ]
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.CognitiveServices/accounts",
+              "apiVersion": "2022-12-01",
+              "name": "[parameters('cognitiveServiceName')]",
+              "tags": "[parameters('defaultTags')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "[parameters('sku')]"
+              },
+              "kind": "ComputerVision",
+              "identity": {
+                "type": "SystemAssigned"
+              },
+              "properties": {
+                "customSubDomainName": "[format('mercuryhealth-{0}', uniqueString(resourceGroup().id))]",
+                "networkAcls": {
+                  "defaultAction": "Allow",
+                  "virtualNetworkRules": [],
+                  "ipRules": []
+                },
+                "apiProperties": {
+                  "statisticsEnabled": false
+                },
+                "publicNetworkAccess": "Enabled"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-10-01",
+      "name": "configSettings",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "keyvaultName": {
+            "value": "[variables('keyvaultName')]"
+          },
+          "appServiceprincipalId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'webappdeploy'), '2020-10-01').outputs.out_appServiceprincipalId.value]"
+          },
+          "webappName": {
+            "value": "[variables('webSiteName')]"
+          },
+          "functionAppName": {
+            "value": "[variables('functionAppName')]"
+          },
+          "funcAppServiceprincipalId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'functionappdeploy'), '2020-10-01').outputs.out_funcAppServiceprincipalId.value]"
+          },
+          "kvValue_AzureWebJobsStorageName": {
+            "value": "[parameters('kvValue_AzureWebJobsStorageName')]"
+          },
+          "kvValue_AzureWebJobsStorageValue": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'functionappdeploy'), '2020-10-01').outputs.out_AzureWebJobsStorage.value]"
+          },
+          "kvValue_WebsiteContentAzureFileConnectionStringName": {
+            "value": "[parameters('kvValue_WebsiteContentAzureFileConnectionString')]"
+          },
+          "kvValue_ApimSubscriptionKeyName": {
+            "value": "[parameters('kvValue_ApimSubscriptionKeyName')]"
+          },
+          "appInsightsInstrumentationKey": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'appinsightsdeploy'), '2020-10-01').outputs.out_appInsightsInstrumentationKey.value]"
+          },
+          "appInsightsConnectionString": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'appinsightsdeploy'), '2020-10-01').outputs.out_appInsightsConnectionString.value]"
+          },
+          "Deployed_Environment": {
+            "value": "[parameters('Deployed_Environment')]"
+          },
+          "AzObjectIdPagels": {
+            "value": "[parameters('AzObjectIdPagels')]"
+          },
+          "ADOServiceprincipalObjectId": {
+            "value": "[parameters('ADOServiceprincipalObjectId')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.14.46.61228",
+              "templateHash": "7073466614290140533"
+            }
+          },
+          "parameters": {
+            "keyvaultName": {
+              "type": "string"
+            },
+            "webappName": {
+              "type": "string"
+            },
+            "functionAppName": {
+              "type": "string"
+            },
+            "kvValue_AzureWebJobsStorageName": {
+              "type": "string"
+            },
+            "kvValue_ApimSubscriptionKeyName": {
+              "type": "string"
+            },
+            "kvValue_WebsiteContentAzureFileConnectionStringName": {
+              "type": "string"
+            },
+            "appInsightsInstrumentationKey": {
+              "type": "string"
+            },
+            "appInsightsConnectionString": {
+              "type": "string"
+            },
+            "Deployed_Environment": {
+              "type": "string"
+            },
+            "appServiceprincipalId": {
+              "type": "securestring"
+            },
+            "funcAppServiceprincipalId": {
+              "type": "securestring"
+            },
+            "kvValue_AzureWebJobsStorageValue": {
+              "type": "securestring"
+            },
+            "tenant": {
+              "type": "string",
+              "defaultValue": "[subscription().tenantId]"
+            },
+            "AzObjectIdPagels": {
+              "type": "securestring"
+            },
+            "ADOServiceprincipalObjectId": {
+              "type": "securestring"
+            },
+            "accessPolicies": {
+              "type": "array",
+              "defaultValue": [
+                {
+                  "tenantId": "[parameters('tenant')]",
+                  "objectId": "[parameters('appServiceprincipalId')]",
+                  "permissions": {
+                    "keys": [
+                      "get",
+                      "list"
+                    ],
+                    "secrets": [
+                      "get",
+                      "list"
+                    ]
+                  }
+                },
+                {
+                  "tenantId": "[parameters('tenant')]",
+                  "objectId": "[parameters('funcAppServiceprincipalId')]",
+                  "permissions": {
+                    "keys": [
+                      "get",
+                      "list"
+                    ],
+                    "secrets": [
+                      "get",
+                      "list"
+                    ]
+                  }
+                },
+                {
+                  "tenantId": "[parameters('tenant')]",
+                  "objectId": "[parameters('AzObjectIdPagels')]",
+                  "permissions": {
+                    "keys": [
+                      "get",
+                      "list"
+                    ],
+                    "secrets": [
+                      "get",
+                      "list",
+                      "set",
+                      "delete"
+                    ]
+                  }
+                },
+                {
+                  "tenantId": "[parameters('tenant')]",
+                  "objectId": "[parameters('ADOServiceprincipalObjectId')]",
+                  "permissions": {
+                    "keys": [
+                      "get",
+                      "list"
+                    ],
+                    "secrets": [
+                      "get",
+                      "list"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.KeyVault/vaults/accessPolicies",
+              "apiVersion": "2022-07-01",
+              "name": "[format('{0}/{1}', parameters('keyvaultName'), 'add')]",
+              "properties": {
+                "accessPolicies": "[parameters('accessPolicies')]"
+              }
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2022-07-01",
+              "name": "[format('{0}/{1}', parameters('keyvaultName'), parameters('kvValue_AzureWebJobsStorageName'))]",
+              "properties": {
+                "contentType": "text/plain",
+                "value": "[parameters('kvValue_AzureWebJobsStorageValue')]"
+              }
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2022-07-01",
+              "name": "[format('{0}/{1}', parameters('keyvaultName'), parameters('kvValue_WebsiteContentAzureFileConnectionStringName'))]",
+              "properties": {
+                "contentType": "text/plain",
+                "value": "[parameters('kvValue_AzureWebJobsStorageValue')]"
+              }
+            },
+            {
+              "type": "Microsoft.Web/sites/config",
+              "apiVersion": "2022-03-01",
+              "name": "[format('{0}/{1}', parameters('webappName'), 'appsettings')]",
+              "properties": {
+                "DeployedEnvironment": "[parameters('Deployed_Environment')]",
+                "WEBSITE_RUN_FROM_PACKAGE": "1",
+                "WEBSITE_SENTINEL": "1",
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('appInsightsInstrumentationKey')]",
+                "APPINSIGHTS_PROFILERFEATURE_VERSION": "1.0.0",
+                "APPINSIGHTS_SNAPSHOTFEATURE_VERSION": "1.0.0",
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('appInsightsConnectionString')]",
+                "WebAppUrl": "[format('https://{0}.azurewebsites.net/', parameters('webappName'))]",
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true"
+              }
+            },
+            {
+              "type": "Microsoft.Web/sites/config",
+              "apiVersion": "2022-03-01",
+              "name": "[format('{0}/{1}', parameters('functionAppName'), 'appsettings')]",
+              "kind": "string",
+              "properties": {
+                "AzureWebJobsStorage": "[format('@Microsoft.KeyVault(VaultName={0};SecretName={1})', parameters('keyvaultName'), parameters('kvValue_AzureWebJobsStorageName'))]",
+                "WebsiteContentAzureFileConnectionString": "[format('@Microsoft.KeyVault(VaultName={0};SecretName={1})', parameters('keyvaultName'), parameters('kvValue_WebsiteContentAzureFileConnectionStringName'))]",
+                "ApimSubscriptionKey": "[format('@Microsoft.KeyVault(VaultName={0};SecretName={1})', parameters('keyvaultName'), parameters('kvValue_ApimSubscriptionKeyName'))]",
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('appInsightsInstrumentationKey')]",
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('appInsightsConnectionString')]",
+                "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+                "FUNCTIONS_EXTENSION_VERSION": "~4"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyvaultName'), parameters('kvValue_AzureWebJobsStorageName'))]",
+                "[resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyvaultName'), parameters('kvValue_WebsiteContentAzureFileConnectionStringName'))]"
+              ]
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'appinsightsdeploy')]",
+        "[resourceId('Microsoft.Resources/deployments', 'functionappdeploy')]",
+        "[resourceId('Microsoft.Resources/deployments', variables('keyvaultName'))]",
+        "[resourceId('Microsoft.Resources/deployments', 'webappdeploy')]"
+      ]
+    }
+  ],
+  "outputs": {
+    "out_webSiteName": {
+      "type": "string",
+      "value": "[variables('webSiteName')]"
+    },
+    "out_appInsightsName": {
+      "type": "string",
+      "value": "[variables('appInsightsName')]"
+    },
+    "out_functionAppName": {
+      "type": "string",
+      "value": "[variables('functionAppName')]"
+    },
+    "out_apiServiceName": {
+      "type": "string",
+      "value": "[variables('apiServiceName')]"
+    },
+    "out_keyvaultName": {
+      "type": "string",
+      "value": "[variables('keyvaultName')]"
+    },
+    "out_appInsightsApplicationId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'appinsightsdeploy'), '2020-10-01').outputs.out_appInsightsApplicationId.value]"
+    },
+    "out_appInsightsAPIApplicationId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'appinsightsdeploy'), '2020-10-01').outputs.out_appInsightsAPIApplicationId.value]"
+    },
+    "out_releaseAnnotationGuidID": {
+      "type": "string",
+      "value": "[parameters('releaseAnnotationGuid')]"
+    }
+  }
+}
